@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>개인 블로그</title>
+<style>
+* {
+    padding: 0;
+    margin: 0;
+}
+ul, li {
+    list-style: none;
+}
+a {
+    color: white;
+    text-decoration: none;
+}
+#header {
+    background-color: rgb(60, 60, 255);
+    height: 100px;
+    text-align: center;
+
+    }
+#header> h1 {
+    color: white;
+}
+
+#header li {
+    float: right;
+    padding: 10px;
+}
+
+</style>
+</head>
+<body>
+    <header id="header">
+        <h1>${userName }의 블로그입니다.</h1>
+        <ul>
+                <li><a href="#">로그아웃</a></li>
+            <li><a href="#">로그인</a></li>
+        </ul>
+    </header>
+	
+</body>
+</html>

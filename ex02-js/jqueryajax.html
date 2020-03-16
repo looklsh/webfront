@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <!--jquery로드-->
+
+
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <style>
+    .poster{
+        width: 200px;
+    }
+    </style>
+</head>
+
+<body>
+    <button id="btncallhtml">HTML 조각 불러오기</button>
+    <!--서버로부터 HTML조각 불러와서 DOM에 추가-->
+    <button id="btncallmovies">
+        API 서버로부터 영화 리스트 불러오기
+    </button>
+
+    <div id="content">
+        <!--ajax 호출후 전달받은 html조각을 child로 추가할 예정-->
+
+    </div>
+    <table id="list" border="1" width="640px">
+        <!--ajax 로부터 json불러와서 htmlelement 생성한 후 등록-->
+    <script>
+        //초기화 코드
+        $(document).ready(function (event) { //$(funtion(event){
+            //btncallhtml 의 click 이벤트에서 ajax 호출
+            $("#btncallhtml").on("click", function (event) {
+                //ajax호출
+                $.ajax({
+                    url: "/snippet.html", //요청하 페이지 url
+                    type: "GET", //요청 방식(get.post)
+                    dataType: "text", //서버로부터 전달 될 데이터의 형식
+                    success: function (result) {
+                        //ajax 요청이 성공 했을때 콜백되는 함수
+                        console.log("RESULT:", result);
+                        //div#content html등록
+                        $("#content").html(result);
+                    },
+                    error: function (request, status, error) {
+                        //ajax요청이 실패했을때 콜백되는 함수
+                        //status : 에러코드
+                        //reqyest: 에러발생시의 요청 정보
+                        //error:발생한 에러
+                        console.error("상태코드:", status);
+                        console.error("에러:", error);
+                        console.error("에러 당시의 요청 정보:", request);
+                    
+
+            }
+            });
+        });
+        //btncallmovies에 click 이벤트 리스너 등록
+        $("#btncallmovies").on("click", function(event){
+            //ajax 호출: https://localhost:3000/movies -> 영화목록
+            $.ajax({
+                url: "http://localhost:3000/movies",
+                type: "GET",
+                dataType:"json",
+                success: function(result){
+                    console.log("영화목록:", result);
+                    //result는 현재 json->javascript 객체처럼 쓸 수있다
+                    var movies = result.movies; // Array
+                    //loop: 개별 영화 뽑아오기
+                    for(var i=0; i<movies.length; i++){
+                        var movie = movies[i];
+                        console.log("영화정보:", movie);
+
+                        //개별 정보 추출
+                        var id = movie.id;
+                        var title = movie.title;
+                        var director = movie.director;
+                        var year = movie.year;
+                        var image = "http://localhost:3000/images/" + movie.image;
+
+                        var tr = $("<tr>"); //새 엘리먼트 -> 현재는 고아
+                        //가장 좋은 방법은 엘리먼트들을 직접 생성해서 append로 등록
+                        //여기서는 tr태그 내부 html 을 문자열로 만들어서 html()으로 등록
+                        
+                        // var moviehtml = `<td><img class="poster" src="${image}"></td>
+                        // <td>${title}(${year})</td>
+                        // <td>${director}</td>`;
+                        var moviehtml = "<td> <img class='poster' src="+image+"></td>"
+                        +"<td>"+title+"("+year+")</td>"
+                        +"<td>"+director+"</td>";
+                        //moviehtml을 tr에 등록(html)
+                        tr.html(moviehtml);
+                        //tr을 table#list에 child로 등록
+                        $("#list").append(tr);
+                    }
+                },
+                error: function(request, status, error){
+                    console.error("에러:", error);
+                }
+            });
+        });
+    });
+    </script>
+</body>
+
+</html>

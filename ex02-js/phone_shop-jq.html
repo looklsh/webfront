@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>iPhones</title>
+    <!--jquery로드-->
+
+
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <style>
+        #product-info img.selected {
+            width: 225px;
+            height: 265px;
+            float: left;
+            border: 1px solid lightslategrey;
+            margin: 5px;
+        }
+
+        #product-list li {
+            list-style-type: none;
+
+            border: 1px solid lightslategrey;
+            margin: 5px;
+            float: left;
+        }
+
+        #product-list li img {
+            width: 100px;
+            height: 100px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="product-info">
+        <img id="main-image" src="images/iphone-xs.jpeg" class="selected" title="iPhones XS">
+        <h2>iPhone Xs</h2>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
+            magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
+            commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat
+            nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit
+            anim id est laborum.</p>
+        <h3>Products</h3>
+        <ul id="product-list">
+            <li><img class="sub-image" src="/images/iphone-xs.jpeg" title="iPhone XS"></li>
+            <li><img class="sub-image" src="/images/iphone-xr.jpeg" title="iPhone XR"></li>
+            <li><img class="sub-image" src="/images/iphone8.jpeg" title="iPhone 8"></li>
+            <li><img class="sub-image" src="/images/ipad-mini.jpeg" title="iPad Mini"></li>
+        </ul>
+        <input type="text" id="keyword" />
+        <!--inline event-->
+        <button id="btn-search" onclick="alert(this.innerText);">검색</button>
+    </div>
+    <script>
+        function testAttribute() {
+            //wrapper
+            /*jquery()혹은 $()를 얻어올 수 있다
+            getElemrntId, classname, tagname, queryselector(all)모든 탐색 메서드에 대응
+            */
+
+            //특정 id를 가진 요소의 검색
+            // var obj = document.getElementById("main-image");
+            var obj = $("#main-image");
+            console.log("#main-image:", obj);
+            //obj는 실제 htmlelement가 아니라 요소를 감싸고 있는 jquery객체이다
+
+
+            //title 속성을 받아오기
+            // var title = obj.getAttribute("title");
+            //jquery속성 다루기
+            var title = obj.attr("title");
+            console.log("Title:", title);
+            //title속성 변경  : .attr("속성명", 속성값)
+            // obj.setAttribute("title", "추천상품:" +title);
+            obj.attr("title", "추천상품:" + title);
+            console.log("변경된 title 속성:", obj.attr("title"));
+
+            //하단 Products 이미지들의 title 속성도 변경 해봅시다
+            //요소들 선택: $()
+            // var subs = document.getElementsByClassName("sub-image");
+            var subs = $(".sub-image");
+            console.log(".sub-image:", subs);
+
+            console.log(subs._proto_); //html.collection(일종의 배열)
+            //직접접근은 안되고 index접근을 해야 한다(1개일지라도)
+            for (var i = 0; i < subs.length; i++) {
+                //subs[i]->jquery객체가 아니어서 jquery함수를 쓸수 없다
+                var sub = $(subs[i]); //jquery객체로 WRAPPING
+                sub.attr("title", "사진" + sub.attr("title"));
+                // subs[i].setAttribute("title", "사진:" + subs[i].getAttribute("title"));
+                console.log("바뀐 속성:", sub.attr("title"));
+
+            }
+
+        }
+        // testAttribute();
+
+        // document.getElementById("keyword").onkeyup = function(event){
+        //     // console.log("EVENT", event);
+
+        //     console.log("EVENT를 발생시킨 객체:", event.target);//중요
+        //     console.log("눌러진 키:", event.keyCode);//한글은 안넘어와요
+        //     console.log("입력 창에 입력된 내용:", event.target.value);
+
+        //     //검색 버튼을 찾기
+        //     var btn = document.getElementById("btn-search");
+        //     btn.innerText = event.target.value+"검색";
+
+        // }
+        //스크립트 혹은 이벤트 리스너 등은 문서가 모듀 로드된 상황에서 연결하는 것이 가장 좋은패턴 window 객체의 load이벤트에서 초기화하는 것이 바람직
+
+        // window.addEventListener("load",function(event){
+        //
+        $(document).ready(function (event) {
+            console.log("문서 로드 완료!");
+            //keyword input 에서 keyup이 발생했을 경우의 이벤트 연결
+
+            //JQUERY의 이벤트 연결은 .ON매서드 이용
+            // document.getElementById("keyword").addEventListener("keyup", function(event){
+            //     var btn = document.getElementById("btn-search");
+            //     btn.innerText = event.target.value + "검색";
+            // });
+
+            $("#keyword").on("keyup", function (event) {
+                $("#btn-search").text($(event.target).val() + "검색");
+                //val()->input 의 value속성
+            });
+
+
+            //sub-image 클래스를 가진 요소를 클릭하면 sub-image의 src와 title을 main-image의 src와 #product.info h2로 이동
+            // var products = document.getElementsByClassName("sub-image");
+            var products = $(".sub-image");
+            products.on("click", function (event) {
+                var obj = $(event.target);//이벤트를 발생시킨 객체
+                var mainImage = $("#main-image");
+                mainImage.attr({
+                    src: obj.attr('src'),
+                    title: obj.attr("title")
+                });//여러개의 속성을 동시에 변경 - > 인자로 json객체 전달
+                $("#product-info h2").text(obj.attr("title"));
+            });
+            // console.log("Products:", products);
+            // for(var i=0; i<products.length; i++){
+            //     var product = products[i];
+            //     console.log("PRODUCT:", product);
+            //     //이벤트 리스너 부착
+            //     product.addEventListener("click", function(event){
+            //         var obj = event.target; //이벤트를 발생시킨 객체
+            //         //현재 obj는 img태그: src 속성, title속성이 있을 것
+            //         var mainImage = document.getElementById("main-image");
+            //         mainImage.setAttribute("src", obj.getAttribute("src"));
+            //         mainImage.setAttribute("title", obj.getAttribute("title"));
+
+            //         document.querySelector("#product-info > h2").innerText = obj.getAttribute("title");
+            //     });
+            // }
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Axios Example</title>
+     <!-- 도움되는 콘솔 경고를 포함한 개발 버전 -->
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<!--Axios-->
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<style>
+img{
+    
+    width: 300px;
+    float: left;
+}
+#app .movie:nth-child(even){
+    background-color: lightgray;
+}
+#app div{
+    height: 440px;
+}
+#app div h2, p{
+    padding: 15px;
+    
+}
+
+
+
+</style>
+</head>
+<body>
+    <h1>Pixa Movies</h1>
+    <div id="app">
+        <!--loop : 개별  movie출력-->
+        <div v-for='movie in movies' class="movie">
+            <img v-bind:src="'http://localhost:3000/images/' + movie.image"><!--서버 주소+movie.image-->
+            <h2>{{movie.title}}<!--movie.title--></h2>
+            <p>{{movie.director}}<!--movie.director--></p>
+            <p>{{movie.year}}<!--movie.year--></p>
+        </div>
+    </div>
+</body>
+<script>
+    var app = new Vue({
+        el:"#app",
+        data: {
+            movies: [] //무비 객체를 저장할 array
+        },
+        created: function(){
+            console.log("서버롭터 영화데이터 로드");
+            //HTTP ASYNC CALL
+            var instance = this;
+            axios({
+                url: "http://localhost:3000/movies",
+                method: "GET"
+            }).then(function(response){
+                //요청이 성공했을 때의 처리
+                console.log(response);
+                instance.movies = response.data.movies;
+                console.log(this.movies);
+            }).catch(function(error){
+                console.log("Error:", error);
+            })
+        }
+    })
+</script>
+</html>
